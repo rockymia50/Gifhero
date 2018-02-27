@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Favorite Heroes</title>
+    <style type="text/css">
+        body {
+            background-image: url("https://media.giphy.com/media/BHNfhgU63qrks/giphy.gif");
+            height: 100;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+
+
+        button {
+
+            background: #793fbf;
+            background-image: -webkit-linear-gradient(top, #793fbf, #2980b9);
+            background-image: -moz-linear-gradient(top, #793fbf, #2980b9);
+            background-image: -ms-linear-gradient(top, #793fbf, #2980b9);
+            background-image: -o-linear-gradient(top, #793fbf, #2980b9);
+            background-image: linear-gradient(to bottom, #793fbf, #2980b9);
+            -webkit-border-radius: 26;
+            -moz-border-radius: 26;
+            border-radius: 26px;
+            -webkit-box-shadow: 0px 4px 9px #1c14b3;
+            -moz-box-shadow: 0px 4px 9px #1c14b3;
+            box-shadow: 0px 4px 9px #1c14b3;
+            font-family: Arial;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 11px 14px 11px 13px;
+            border: solid #811f8c 3px;
+            text-decoration: none;
+        }
+
+        button:hover {
+
+            background: #3cb0fd;
+            background-image: -webkit-linear-gradient(top, #3cb0fd, #055082);
+            background-image: -moz-linear-gradient(top, #3cb0fd, #055082);
+            background-image: -ms-linear-gradient(top, #3cb0fd, #055082);
+            background-image: -o-linear-gradient(top, #3cb0fd, #055082);
+            background-image: linear-gradient(to bottom, #3cb0fd, #055082);
+            text-decoration: none;
+        }
+
+
+
+
+        div {
+            align-content: center;
+            border-color: red;
+            box-shadow: 10%;
+            border-width: 10%;
+            text-align: center;
+            color: white;
+
+
+        }
+
+        form,
+        input {
+            text-align: center;
+            margin: 10px;
+            font-size: 100%;
+            background: #793fbf;
+            background-image: -webkit-linear-gradient(top, #793fbf, #2980b9);
+            background-image: -moz-linear-gradient(top, #793fbf, #2980b9);
+            background-image: -ms-linear-gradient(top, #793fbf, #2980b9);
+            background-image: -o-linear-gradient(top, #793fbf, #2980b9);
+            background-image: linear-gradient(to bottom, #793fbf, #2980b9);
+            -webkit-border-radius: 26;
+            -moz-border-radius: 26;
+            border-radius: 26px;
+            -webkit-box-shadow: 0px 4px 9px #1c14b3;
+            -moz-box-shadow: 0px 4px 9px #1c14b3;
+            box-shadow: 0px 4px 9px #1c14b3;
+            font-family: Arial;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 11px 14px 11px 13px;
+            border: solid #811f8c 3px;
+            text-decoration: none;
+            display: inline-flex;
+            margin-right: -17%;
+            margin-left: 30%;
+            padding: 10px;
+        }
+        .hero-inline{
+            display: inline-block;
+            margin: 5px;
+        }
+    </style>
+</head>
+</head>
+
+<body>
+    <!-- Rendered buttons go here -->
+    <div>
+        <button id="show" data-search="Batman">Batman</button>
+        <button id="show" data-search="Vegeta">Vegeta</button>
+        <button id="show" data-search="Humpty Dumpty">Humpty Dumpty</button>
+        <button id="show" data-search="David Hasselhoff">David Hasselhoff</button>
+        <div id="buttons-view"> </div>
+    </div>
+
+
+
+    <form id="hero-form">
+        <label for="hero-input">Add a Hero</label>
+
+        <input type="text" id="hero-input">
+        <br>
+
+        <!-- Button triggers new movie to be added -->
+        <input id="addHero" type="Submit" value="Submit">
+
+    </form>
+    <!-- rendered info goes here -->
+    <div class="myBox">
+        <div id="heroes">
+    </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        // Initial array of movies
+        var topics = [];
+
+
+        //Function with AJAX call to GIPHY; Q parameterc for API link set to search term, limit 10 results
+        //Create div with respective still and animate image sources with "data-state", "data-still" and "data-animate" attributes
+        function displayhero() {
+
+            var hero = $(this).data("search");
+            console.log(hero);
+
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + hero +
+                "&api_key=UUGHpsObWIFdSlPISoKfslfI7vXhmLiw&limit=10&offset=0&rating=G&lang=en";
+
+            console.log(queryURL);
+
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).done(function (response) {
+
+                // storing the initial data
+                var results = response.data;
+                console.log(results);
+
+
+                for (var i = 0; i < results.length; i++) {
+
+                    var showDiv = $("<div>");
+                    showDiv.addClass('hero-inline');
+
+                    var rating = results[i].rating;
+                    var defaultAnimatedSrc = results[i].images.fixed_height.url;
+                    var staticSrc = results[i].images.fixed_height_still.url;
+                    var showImage = $("<img>");
+                    var p = $("<p>").text("Rating: " + rating);
+
+                    showImage.attr("src", staticSrc);
+                    showImage.addClass("heroGiphy");
+                    showImage.attr("data-state", "still");
+                    showImage.attr("data-still", staticSrc);
+                    showImage.attr("data-animate", defaultAnimatedSrc);
+                    showDiv.append(p);
+                    showDiv.append(showImage);
+                    $("#heroes").prepend(showDiv);
+
+                }
+            });
+        }
+
+        //Submit button click event takes search term from form input, trims and pushes to topics array, displays button
+        $("#addHero").on("click", function (event) {
+            event.preventDefault();
+            var her = $("#hero-input").val().trim();
+            console.log(her);
+            topics.push(her);
+            console.log(topics);
+            $("#hero-input").val('');
+            displayButtons();
+        });
+
+        //Function iterates through topics array to display button with array values in "buttons-view" section of HTML
+        function displayButtons() {
+
+            // Empty the display
+            $("#buttons-view").empty();
+
+            // Runs the loop through the array
+            for (var i = 0; i < topics.length; i++) {
+                var a = $('<button>');
+                a.attr("id", "show");
+                a.attr("data-search", topics[i]);
+                a.text(topics[i]);
+                $("#buttons-view").append(a);
+            }
+        }
+
+
+        // displayButtons();
+
+        //Click event on button with id of "show" executes displayhero function
+        $(document).on("click", "#show", displayhero);
+
+        //Click event on gifs with class of "heroGiphy" executes pausePlayGifs function
+        $(document).on("click", ".heroGiphy", pausePlayGifs);
+
+        //Function accesses "data-state" attribute and depending on status, changes image source to "data-animate" or "data-still"
+        function pausePlayGifs() {
+            var state = $(this).attr("data-state");
+            if (state === "still") {
+                $(this).attr("src", $(this).attr("data-animate"));
+                $(this).attr("data-state", "animate");
+            } else {
+                $(this).attr("src", $(this).attr("data-still"));
+                $(this).attr("data-state", "still");
+            }
+
+            //  I still need to render new strings in array as buttons.
+        }
+    </script>
+</body>
+
+</html>
